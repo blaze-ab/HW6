@@ -1,0 +1,93 @@
+<% include common/header.ejs %>
+
+<div class="">
+    <div class="menu">
+        <div class="discount ribbon">
+            <img src="assets/images/discount.svg">
+            <div class="ribb" style="text-align: center"> This week
+                <div style=" border-bottom-style: dashed"> Discount</div>
+                -20%
+            </div>
+        </div>
+        <div class="pizza flex">
+            <div class="ribbon">
+                <div class="ribb" style="text-align: center"> Pizza <br>KMA</br> </div>
+                <img class="disc" src="assets/images/discount.svg"></div>
+            <div class="part flex">
+                <div class="contacts flex">
+                    <div class="b1"> (044) 222 5 222</div>
+                    <div class="b2"> 24/7</div>
+                    <div class="b3"> Free shipping</div>
+                </div>
+                <div>
+                    <button class="out" type="button"> Log out</button>
+                </div>
+            </div>
+        </div>
+        <div class="for-orders flex" style="flex-wrap: wrap;">
+            <div class="forms">
+                <div id="f-name" class="flex">
+                    <label for="first_name">First Name </label>
+                    <input required type="text" id="first_name" name="first_name" placeholder="First name">
+                </div>
+
+                <div id="l-name" class="flex">
+                    <label for="last_name">Last Name </label>
+                    <input required type="text" id="last_name" name="last_name" placeholder="Last name">
+                </div>
+
+                <div id="address" class="flex">
+                    <label for="home-address">Address </label>
+                    <input required type="text" id="home-address" name="home-address" placeholder="Phone number">
+                </div>
+
+                <div id="number" class="flex">
+                    <label for="phone-number">Phone number </label>
+                    <input required type="text" id="phone-number" name="last_name" placeholder="Phone number">
+                </div>
+
+                <div id="e-mail" class="flex">
+                    <label for="email"> Email </label>
+                    <input required type="text" id="email" name="email" placeholder="Email">
+                </div>
+
+                <div class="send-btn">
+                    <a href="#" class="send btn btn-default">Ready</a>
+                </div>
+            </div>
+
+            <div class="saved-order">
+                <div> Name: <div id="name"> </div></div>
+                <div> Surname: <div id="surname"> </div></div>
+                <div> Address: <div id="address2"> </div></div>
+                <div> Phone: <div id="phone"> </div></div>
+                <div> Email: <div id="email2"> </div></div>
+                <div> Estimated time of delivery: <div id="time">40 min</div></div>
+            </div>
+
+        </div>
+    </div>
+    <div id="cart">
+        <div class="orders">
+            <div class="kek flex">
+                <div class="ordersText"> Orders
+                    <div id="tOrders" class="circle"> 0</div>
+                </div>
+                <a href="#" class="b3 btn btn-default">Clear cart</a>
+            </div>
+        </div>
+        <div id="orders">
+        </div>
+        <div class="toOrder">
+            <div class=" c flex">
+                <div class="sum"> Total price :</div>
+                <div class="pr"> 0 grn</div>
+            </div>
+            <div>
+                <a href="#" class="zamovyty btn btn-default">Order</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% include common/footer.ejs %>
