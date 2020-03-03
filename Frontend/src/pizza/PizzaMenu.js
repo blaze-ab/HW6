@@ -6,28 +6,28 @@ var PizzaCart = require('./PizzaCart');
 var Pizza_List = require('../Pizza_List');
 
 
-$(".all").click(function(){
+$(".all").click(function () {
     initialiseMenu();
     $("#k").text(8);
     $(".var").text($(".all").text());
 });
-$(".meat").click(function(){
+$(".meat").click(function () {
     filterPizza("meat");
     $(".var").text($(".meat").text());
 });
-$(".seafood").click(function(){
+$(".seafood").click(function () {
     filterPizza("ocean");
     $(".var").text($(".seafood").text());
 });
-$(".pineapple").click(function(){
+$(".pineapple").click(function () {
     filterPizza("pineapple");
     $(".var").text($(".pineapple").text());
 });
-$(".mushrooms").click(function(){
+$(".mushrooms").click(function () {
     filterPizza("mushroom");
     $(".var").text($(".mushrooms").text());
 });
-$(".vegan").click(function(){
+$(".vegan").click(function () {
     filterPizza("vegan");
     $(".var").text($(".vegan").text());
 });
@@ -35,10 +35,8 @@ $(".vegan").click(function(){
 var $pizza_list = $("#pizza_list");
 
 function showPizzaList(list) {
-    //Очищаємо старі піци в кошику
     $pizza_list.html("");
 
-    //Онволення однієї піци
     function showOnePizza(pizza) {
         var html_code = Templates.PizzaMenu_OneItem({pizza: pizza});
 
@@ -79,9 +77,9 @@ function filterPizza(filter) {
 
     var q = 0;
     Pizza_List.forEach(function (pizza) {
-        if (pizza.filters.findIndex(elem => elem === filter) != -1){
+        if (pizza.filters.findIndex(elem => elem === filter) != -1) {
             pizza_shown.push(pizza);
-            q+=1;
+            q += 1;
         }
 
 
@@ -90,11 +88,17 @@ function filterPizza(filter) {
 
     showPizzaList(pizza_shown);
 }
+var API = require('../API');
 
 function initialiseMenu() {
     $(".var").text("All variety");
     $("#k").text(8);
-    showPizzaList(Pizza_List)
+    API.getPizzaList(function (err, data) {
+        if (err)
+            return err;//callback(err); //?
+        Pizza_List = data;
+        showPizzaList(Pizza_List);
+    });
 }
 
 exports.filterPizza = filterPizza;

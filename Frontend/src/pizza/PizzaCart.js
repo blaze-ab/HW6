@@ -17,6 +17,8 @@ var $cart = $("#orders");
 //variables for tracking total number of orders and total price.
 var totalPrice = 0;
 var totalOrders = 0;
+var able = false;
+
 
 //checks if given pizza is the same pizza from particular place in array(cart).
 function checkSim(pizza, i, size) {
@@ -29,9 +31,6 @@ function checkSim(pizza, i, size) {
 }
 
 function addToCart(pizza, size) {
-    //Додавання однієї піци в кошик покупок
-
-    //Приклад реалізації, можна робити будь-яким іншим способом
     Cart.push({
         pizza: pizza,
         size: size,
@@ -46,24 +45,18 @@ function addToCart(pizza, size) {
 
     $(".pr").text(totalPrice + " grn");
     $("#tOrders").text(totalOrders);
-    //Оновити вміст кошика на сторінці
+
     updateCart(Cart[Cart.length - 1]);
     updateLocalStorage(totalOrders, totalPrice, JSON.stringify(Cart));
 }
 
 function removeFromCart(cart_item) {
-    //Видалити піцу з кошика
-    //TODO: треба зробити
 
     var idx = Cart.indexOf(cart_item);
-    // Второй параметр - число элементов, которые необходимо удалить
     Cart.splice(idx, 1);
 }
 
 function initialiseCart() {
-    //Фукнція віпрацьвуватиме при завантаженні сторінки
-    //Тут можна наприклад, зчитати вміст корзини який збережено в Local Storage то показати його
-    //TODO: ...
     totalPrice = parseInt(localStorage.getItem("totalPrice"), 10);
     if (totalPrice) {
         Cart = JSON.parse(localStorage.getItem("cart"));
@@ -82,7 +75,6 @@ function updateLocalStorage(totalOrders, totalPrice, Cart) {
 }
 
 function getPizzaInCart() {
-    //Повертає піци які зберігаються в кошику
     return Cart;
 }
 
@@ -145,6 +137,35 @@ function updateCart(cart_item) {
     });
 }
 
+
+$('.send').click(function () {
+    var API = require('../API');
+    var fname = document.getElementById("first_name");
+    var lname = document.getElementById("last_name");
+    var address = document.getElementById("home_address");
+    var phone = document.getElementById("phone_number");
+    var email = document.getElementById("email");
+
+    API.createOrder({
+        contact: {
+            name: fname.value,
+            surname: lname.value,
+            address:address.value,
+            phone:phone.value,
+            email:email.value
+        },
+        order: getPizzaInCart(),
+        price: $(".pr").text()
+    });
+
+
+    $('#name').text(fname.value);
+    $('#surname').text(lname.value);
+    $('#address2').text(address.value);
+    $('#phone').text(phone.value);
+    $('#email2').text(email.value);
+});
+
 $('.b3').click(function () {
     Cart.splice(0, Cart.length);
     totalOrders = 0;
@@ -156,9 +177,7 @@ $('.b3').click(function () {
 });
 
 $('.zamovyty').click(function () {
-    $(".minus").css('display', "none");
-    $(".plus").css('display', "none");
-    $(".x").css('display', "none");
+    window.location.href = "/order.html";
 });
 
 exports.removeFromCart = removeFromCart;

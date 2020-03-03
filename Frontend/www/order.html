@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title>Pizza</title>
+<header>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>Pizza</title>
 
-    <!-- Bootsrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <!-- Bootsrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 
-    <!-- LESS основний файл -->
-    <link rel="stylesheet/less" type="text/css" href="assets/less/main.less"/>
-    <!-- LESS JavaScript компілятор -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/2.5.3/less.min.js"></script>
+        <!-- LESS основний файл -->
+        <link rel="stylesheet/less" type="text/css" href="assets/less/main.less"/>
+        <!-- LESS JavaScript компілятор -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/2.5.3/less.min.js"></script>
+    </head>
+</header>
 
-
-</head>
 <body>
 <div class="menu">
     <div class="discount ribbon">
@@ -38,32 +39,35 @@
             </div>
         </div>
     </div>
-    <div class="for-orders flex" style="flex-wrap: wrap;">
+    <div class="forms-orders flex" style="flex-wrap: wrap;">
 
         <div class="forms">
             <form action="#0" >
-                <div id="f-name" class="flex">
+                <div id="f-name" class="form">
                     <input required type="text" id="first_name" name="first_name" placeholder="First name">
                 </div>
 
-                <div id="l-name" class="flex">
+                <div id="l-name" class="form">
                     <input required type="text" id="last_name" name="last_name" placeholder="Last name">
                 </div>
 
-                <div id="address" class="flex">
-                    <input required type="text" id="home-address" name="home-address" placeholder="Address">
+                <div id="address" class="form">
+                    <input required type="text" id="home-address" name="home_address" placeholder="Address" minlength="10">
+                    <div class = "requirements"> Size of the address is too small. </div>
                 </div>
 
-                <div id="number" class="flex">
-                    <input required type="tel" id="phone-number" name="phone_number" placeholder="Phone number">
+                <div id="number" class="form">
+                    <input required type="tel" id="phone-number" name="phone_number" placeholder="Phone number"  minlength="9" maxlength="18" />
+                    <div class = "requirements"> Please enter valid phone number. </div>
                 </div>
 
-                <div id="e-mail" class="flex">
+                <div id="e-mail" class="form">
                     <input required type="email" id="email" name="email" placeholder="Email">
+                    <div class = "requirements"> Please enter valid email. </div>
                 </div>
             </form>
                 <div class="send-btn">
-                    <a href="#" class="send btn btn-default">Ready</a>
+                    <a href="#" class=" send btn btn-default">Ready</a>
                 </div>
 
         </div>
@@ -88,7 +92,6 @@
                 <div id="time">40 min</div>
             </div>
         </div>
-
     </div>
 </div>
 <div id="cart">
