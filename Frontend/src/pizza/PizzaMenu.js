@@ -1,9 +1,6 @@
-/**
- * Created by chaika on 02.02.16.
- */
 var Templates = require('../Templates');
 var PizzaCart = require('./PizzaCart');
-var Pizza_List = require('../Pizza_List');
+var Pizza_List = require('../Pizza_List').pizza_info;
 
 
 $(".all").click(function () {
@@ -81,13 +78,13 @@ function filterPizza(filter) {
             pizza_shown.push(pizza);
             q += 1;
         }
-
-
         $("#k").text(q);
     });
 
     showPizzaList(pizza_shown);
 }
+
+
 var API = require('../API');
 
 function initialiseMenu() {

@@ -1,6 +1,4 @@
-/**
- * Created by chaika on 02.02.16.
- */
+
 var Templates = require('../Templates');
 
 //pizza sizes
@@ -78,6 +76,10 @@ function getPizzaInCart() {
     return Cart;
 }
 
+function getTotalPrice() {
+    return totalPrice;
+}
+
 function updateCart(cart_item) {
     var html_code = Templates.PizzaCart_OneItem(cart_item);
 
@@ -137,35 +139,6 @@ function updateCart(cart_item) {
     });
 }
 
-
-$('.send').click(function () {
-    var API = require('../API');
-    var fname = document.getElementById("first_name");
-    var lname = document.getElementById("last_name");
-    var address = document.getElementById("home_address");
-    var phone = document.getElementById("phone_number");
-    var email = document.getElementById("email");
-
-    API.createOrder({
-        contact: {
-            name: fname.value,
-            surname: lname.value,
-            address:address.value,
-            phone:phone.value,
-            email:email.value
-        },
-        order: getPizzaInCart(),
-        price: $(".pr").text()
-    });
-
-
-    $('#name').text(fname.value);
-    $('#surname').text(lname.value);
-    $('#address2').text(address.value);
-    $('#phone').text(phone.value);
-    $('#email2').text(email.value);
-});
-
 $('.b3').click(function () {
     Cart.splice(0, Cart.length);
     totalOrders = 0;
@@ -187,5 +160,7 @@ exports.addToCart = addToCart;
 
 exports.getPizzaInCart = getPizzaInCart;
 exports.initialiseCart = initialiseCart;
+
+exports.getTotalPrice = getTotalPrice;
 
 exports.PizzaSize = PizzaSize;

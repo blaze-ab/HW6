@@ -41,9 +41,121 @@ exports.createOrder = function(order_info, callback) {
 };
 
 },{}],2:[function(require,module,exports){
-/**
- * Created by diana on 12.01.16.
- */
+
+function LiqPay(data, signature) {
+    LiqPayCheckout.init({
+        data: data,
+        signature: signature,
+        embedTo: "#liqpay_checkout",
+        mode: "popup", // embed || popup,
+        language: "uk",
+    }).on("liqpay.callback", function (data) {
+        console.log(data.status);
+        console.log(data);
+    }).on("liqpay.ready", function (data) {
+        // ready
+        console.log(data.status);
+        console.log(data);
+    }).on("liqpay.close", function (data) {
+        // close
+    });
+}
+
+exports.LiqPay = LiqPay;
+},{}],3:[function(require,module,exports){
+var mainCoord = new google.maps.LatLng(50.464379, 30.519131);
+var map;
+var directionsService = new google.maps.DirectionsService();
+
+function initialize(home) {
+    var html_element = document.getElementById("map");
+    map = new google.maps.Map(html_element, {
+        center: mainCoord,
+        zoom: 9
+    });
+    setMarker(mainCoord, "assets/images/map-icon.png");
+    var home;
+    var direction;
+    if (home) {
+        home = setMarker(home.data, home.icon);
+        direction = displayDirection(mainCoord, home.data);
+    }
+    return {map: map, home: home, direction: direction};
+}
+
+function geocodeAddress(address, callback) {
+    new google.maps.Geocoder().geocode({'address': address}, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK && results[0])
+            callback(null, results[0].geometry.location);
+        else
+            callback(new Error("Unable to find address."));
+    });
+}
+
+function geocodeLatLng(loc, callback) {
+    new google.maps.Geocoder().geocode({'location': loc}, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK && results[1])
+            callback(null, results[1].formatted_address);
+        else
+            callback(new Error("Unable to find address."));
+    });
+}
+
+function calculateRoute(A, B, callback) {
+    directionsService.route(
+        {
+            origin: A,
+            destination: B,
+            travelMode: google.maps.TravelMode["DRIVING"]
+        },
+        function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                var leg = response.routes[0].legs[0];
+                callback(null, {
+                    duration: leg.duration,
+                    address: leg.end_address
+                });
+            }
+            else
+                callback(new Error("Unable to find direction."));
+        });
+
+    return displayDirection(A, B);
+}
+
+function displayDirection(A, B) {
+    var direction = new google.maps.DirectionsRenderer();
+    direction.setOptions({suppressMarkers: true});
+    directionsService.route(
+        {
+            origin: A,
+            destination: B,
+            travelMode: google.maps.TravelMode["DRIVING"]
+        },
+        function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK)
+                direction.setDirections(response);
+        });
+    direction.setMap(map);
+    return direction;
+}
+
+function setMarker(position, icon) {
+    return new google.maps.Marker({
+        position: position,
+        map: map,
+        icon: icon
+    });
+}
+
+
+exports.mainCoord = mainCoord;
+exports.geocodeLatLng = geocodeLatLng;
+exports.geocodeAddress = geocodeAddress;
+exports.calculateRoute = calculateRoute;
+exports.setMarker = setMarker;
+exports.initialize = initialize;
+},{}],4:[function(require,module,exports){
 
 var pizza_info = [
     {
@@ -71,7 +183,6 @@ var pizza_info = [
         is_new:true,
         is_popular:true,
         filters :["meat","pineapple"]
-
     },
     {
         id:2,
@@ -95,7 +206,7 @@ var pizza_info = [
             price: 199
         },
         is_popular:true,
-        filters :["meat","mushroom",]
+        filters :["meat","mushroom"]
     },
     {
         id:3,
@@ -225,8 +336,8 @@ var pizza_info = [
     }
 ];
 
-module.exports = pizza_info;
-},{}],3:[function(require,module,exports){
+exports.pizza_info = pizza_info;
+},{}],5:[function(require,module,exports){
 /**
  * Created by chaika on 02.02.16.
  */
@@ -238,7 +349,7 @@ exports.PizzaMenu_OneItem = ejs.compile("<%\r\nfunction getIngredientsArray(pizz
 
 exports.PizzaCart_OneItem = ejs.compile("<div>\r\n    <div class=\"actually-orders flex\">\r\n        <div class=\"information\">\r\n            <h3>  <%= pizza.title %> (<%= size %>)</h3>\r\n            <div class=\"flex\">\r\n                <div class=\"align\"> <%= pizza[size].size %> <img src=\"assets/images/size-icon.svg\"></div>\r\n                <div class=\"align\"> <%= pizza[size].weight %> <img src=\"assets/images/weight.svg\"></div>\r\n            </div>\r\n            <div class=\"flex\">\r\n                <% if(window.location.pathname == \"/\") { %>\r\n                <div class=\"flex\" style=\"width: 70%; justify-content: space-around;\">\r\n                    <button class=\"signs minus\" type=\"button\"> -</button>\r\n                    <div class=\"num\"> <%= quantity %> </div>\r\n                    <button class=\"signs plus\" type=\"button\"> +</button>\r\n                    <button class=\"signs x\" type=\"button\"> x</button>\r\n                </div>\r\n                <% } %>\r\n                <% if(window.location.pathname == \"/order.html\") { %>\r\n                <div>\r\n                    <b id=\"price\"><%= price %> грн</b>\r\n                    <b id=\"quantity\" style=\"margin: 2px\">Кількість: <%= quantity %></b>\r\n                </div>\r\n                <% } %>\r\n            </div>\r\n        </div>\r\n        <img class=\"for-orders\" src=\"<%= pizza.icon %>\" alt=\"Pizza\">\r\n    </div>\r\n</div>");
 
-},{"ejs":8}],4:[function(require,module,exports){
+},{"ejs":11}],6:[function(require,module,exports){
 /**
  * Created by chaika on 25.01.16.
  */
@@ -248,16 +359,16 @@ $(function(){
     var PizzaMenu = require('./pizza/PizzaMenu');
     var PizzaCart = require('./pizza/PizzaCart');
     var Pizza_List = require('./Pizza_List');
+    var Order = require('./pizza/orders.js');
+    if (window.location.pathname == "/")
+        PizzaMenu.initialiseMenu();
+    if (window.location.pathname == "/order.html")
+        Order.initOrder();
 
     PizzaCart.initialiseCart();
-    PizzaMenu.initialiseMenu();
-
-
 });
-},{"./Pizza_List":2,"./pizza/PizzaCart":5,"./pizza/PizzaMenu":6}],5:[function(require,module,exports){
-/**
- * Created by chaika on 02.02.16.
- */
+},{"./Pizza_List":4,"./pizza/PizzaCart":7,"./pizza/PizzaMenu":8,"./pizza/orders.js":9}],7:[function(require,module,exports){
+
 var Templates = require('../Templates');
 
 //pizza sizes
@@ -335,6 +446,10 @@ function getPizzaInCart() {
     return Cart;
 }
 
+function getTotalPrice() {
+    return totalPrice;
+}
+
 function updateCart(cart_item) {
     var html_code = Templates.PizzaCart_OneItem(cart_item);
 
@@ -394,35 +509,6 @@ function updateCart(cart_item) {
     });
 }
 
-
-$('.send').click(function () {
-    var API = require('../API');
-    var fname = document.getElementById("first_name");
-    var lname = document.getElementById("last_name");
-    var address = document.getElementById("home_address");
-    var phone = document.getElementById("phone_number");
-    var email = document.getElementById("email");
-
-    API.createOrder({
-        contact: {
-            name: fname.value,
-            surname: lname.value,
-            address:address.value,
-            phone:phone.value,
-            email:email.value
-        },
-        order: getPizzaInCart(),
-        price: $(".pr").text()
-    });
-
-
-    $('#name').text(fname.value);
-    $('#surname').text(lname.value);
-    $('#address2').text(address.value);
-    $('#phone').text(phone.value);
-    $('#email2').text(email.value);
-});
-
 $('.b3').click(function () {
     Cart.splice(0, Cart.length);
     totalOrders = 0;
@@ -445,15 +531,14 @@ exports.addToCart = addToCart;
 exports.getPizzaInCart = getPizzaInCart;
 exports.initialiseCart = initialiseCart;
 
+exports.getTotalPrice = getTotalPrice;
+
 exports.PizzaSize = PizzaSize;
 
-},{"../API":1,"../Templates":3}],6:[function(require,module,exports){
-/**
- * Created by chaika on 02.02.16.
- */
+},{"../Templates":5}],8:[function(require,module,exports){
 var Templates = require('../Templates');
 var PizzaCart = require('./PizzaCart');
-var Pizza_List = require('../Pizza_List');
+var Pizza_List = require('../Pizza_List').pizza_info;
 
 
 $(".all").click(function () {
@@ -531,13 +616,13 @@ function filterPizza(filter) {
             pizza_shown.push(pizza);
             q += 1;
         }
-
-
         $("#k").text(q);
     });
 
     showPizzaList(pizza_shown);
 }
+
+
 var API = require('../API');
 
 function initialiseMenu() {
@@ -553,9 +638,164 @@ function initialiseMenu() {
 
 exports.filterPizza = filterPizza;
 exports.initialiseMenu = initialiseMenu;
-},{"../API":1,"../Pizza_List":2,"../Templates":3,"./PizzaCart":5}],7:[function(require,module,exports){
+},{"../API":1,"../Pizza_List":4,"../Templates":5,"./PizzaCart":7}],9:[function(require,module,exports){
+var API = require('../API');
+var PizzaCart = require('./PizzaCart');
+var Maps = require('../Maps');
+var LiqPay = require('../LiqPay');
+var map;
+var home;
+var direction;
+var homeIcon = "assets/images/home-icon.png";
 
-},{}],8:[function(require,module,exports){
+function initItem(input, text, inputText, textText){
+    if(inputText){
+        input.value = inputText;
+        text.text(textText);
+    }
+}
+function clickToChangeAddress() {
+    google.maps.event.addListener(map, 'click',
+        function (click) {
+            destination(null, click.latLng);
+        });
+}
+
+function initOrder(){
+    var fname = localStorage.getItem("name");
+    initItem($("#first_name"), $("#name"), fname, fname);
+
+    var lname = localStorage.getItem("surname");
+    initItem($("#last_name"), $("#surname"), lname, lname);
+
+    var address = localStorage.getItem("address");
+    initItem($("#home_address"), $("#address2"), address, address);
+
+    var phone = localStorage.getItem("number");
+    initItem($("#phone_number"), $("#phone"), phone, phone);
+
+    var email = localStorage.getItem("email");
+    initItem($("#email"), $("#email2"), email, email);
+
+    var time = localStorage.getItem("time");
+    if (time)
+        $("#time").text(time);
+
+    var h = localStorage.getItem("home");
+    if (h)
+        h = JSON.parse(h);
+    var loadMap = google.maps.event.addDomListener(window, 'load', Maps.initialize(h));
+    map = loadMap.i.map;
+    home = loadMap.i.home;
+    direction = loadMap.i.direction;
+
+    clickToChangeAddress();
+}
+
+function destination(err, LatLng) {
+    if (err)
+        alert(err);
+    else {
+        if (home)
+            home.setMap(null);
+        home = Maps.setMarker(LatLng, homeIcon);
+        localStorage.setItem("home", JSON.stringify({
+            data: LatLng,
+            icon: homeIcon
+        }));
+
+        if (direction)
+            direction.setMap(null);
+        direction = Maps.calculateRoute(Maps.mainCoord, LatLng, function (err, data) {
+            if (err)
+                alert(err);
+            else {
+                $("#home_address").val(data.address);
+                localStorage.setItem("address", data.address);
+                $("#address2").text(data.address);
+                localStorage.setItem("time", data.duration.text);
+                $("#time").text(data.duration.text);
+            }
+        });
+    }
+}
+
+
+$('.send').click(function () {
+    API.createOrder({
+        contact: {
+            name: $("#name").text(),
+            surname: $("#surname").text(),
+            address:$("#address2").text(),
+            phone:$("#phone").text(),
+            email:$("#email2").text(),
+        },
+        order: PizzaCart.getPizzaInCart(),
+        price: PizzaCart.getTotalPrice()
+    }, function (err, data) {
+        if (err)
+            return err;
+        LiqPay.LiqPay(data.data, data.signature);
+    });
+});
+
+$("#first_name").blur(function ()
+{
+    var name = document.getElementById("first_name");
+        $('#name').text(name.value);
+        localStorage.setItem("name", name.value);
+});
+
+$("#last_name").blur(function ()
+{
+    var lname = document.getElementById("last_name");
+        $('#surname').text(lname.value);
+        localStorage.setItem("surname", lname.value);
+});
+
+$("#home_address").blur(function ()
+{
+    var address = document.getElementById("home_address");
+    $('#address2').text(address.value);
+    localStorage.setItem("address", address.value);
+    if(address.value){
+        Maps.geocodeAddress("Киев," + address.value,
+            function (err, LatLng) {
+                destination(err, LatLng);
+            })
+    }
+    if (home)
+        home.setMap(null);
+    localStorage.setItem("home", "");
+    if (direction)
+        direction.setMap(null);
+});
+
+$("#phone_number").blur(function ()
+{
+    var phone = document.getElementById("phone_number");
+    var check = /^\+38(0\d{9})$/.test(phone.value);
+    if(check)
+    {
+        $('#phone').text(phone.value);
+        localStorage.setItem("number", phone.value);
+    }
+});
+
+$("#email").blur(function ()
+{
+    var email = document.getElementById("email");
+    var check =  /.+@.+\..+/.test(email.value);
+    if(check) {
+        $('#email2').text(email.value);
+        localStorage.setItem("email", email.value);
+    }
+});
+
+exports.initOrder = initOrder;
+},{"../API":1,"../LiqPay":2,"../Maps":3,"./PizzaCart":7}],10:[function(require,module,exports){
+
+},{}],11:[function(require,module,exports){
 /*
  * EJS Embedded JavaScript templates
  * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
@@ -1537,7 +1777,7 @@ if (typeof window != 'undefined') {
   window.ejs = exports;
 }
 
-},{"../package.json":10,"./utils":9,"fs":7,"path":11}],9:[function(require,module,exports){
+},{"../package.json":13,"./utils":12,"fs":10,"path":14}],12:[function(require,module,exports){
 /*
  * EJS Embedded JavaScript templates
  * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
@@ -1706,7 +1946,7 @@ exports.cache = {
   }
 };
 
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports={
   "_args": [
     [
@@ -1779,7 +2019,7 @@ module.exports={
   "version": "2.7.4"
 }
 
-},{}],11:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function (process){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
@@ -2085,7 +2325,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":12}],12:[function(require,module,exports){
+},{"_process":15}],15:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -2271,4 +2511,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[4]);
+},{}]},{},[6]);

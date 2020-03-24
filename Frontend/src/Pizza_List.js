@@ -1,6 +1,3 @@
-/**
- * Created by diana on 12.01.16.
- */
 
 var pizza_info = [
     {
@@ -28,7 +25,6 @@ var pizza_info = [
         is_new:true,
         is_popular:true,
         filters :["meat","pineapple"]
-
     },
     {
         id:2,
@@ -52,7 +48,7 @@ var pizza_info = [
             price: 199
         },
         is_popular:true,
-        filters :["meat","mushroom",]
+        filters :["meat","mushroom"]
     },
     {
         id:3,
@@ -182,4 +178,4 @@ var pizza_info = [
     }
 ];
 
-module.exports = pizza_info;
+exports.pizza_info = pizza_info;

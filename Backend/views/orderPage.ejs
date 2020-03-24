@@ -41,7 +41,7 @@
                 </div>
 
                 <div id="number" class="form">
-                    <input value ="+380" required type="tel" id="phone_number" name="phone_number" placeholder="Phone number" pattern="+380[0-9]{9}" maxlength="13" />
+                    <input value ="+380" required type="tel" id="phone_number" name="phone_number" placeholder="Phone number" pattern="\+380[0-9]{9}" maxlength="13" />
                     <div class = "requirements"> Please enter valid phone number. </div>
                 </div>
 
@@ -73,10 +73,13 @@
                 <div id="email2" class="inline"> </div>
             </div>
             <div> Estimated time of delivery:
-                <div id="time" class="inline">40 min</div>
+                <div id="time" class="inline"> </div>
             </div>
         </div>
     </div>
+
+    <div id = "map" > </div>
+    <div id="liqpay_checkout" style = "padding: 20px 0 20px 0"></div>
 </div>
 <div id="cart">
     <div class="orders">
@@ -84,7 +87,7 @@
             <div class="ordersText"> Orders
                 <div id="tOrders" class="circle"> 0</div>
             </div>
-            <a href="#" class="b3 btn btn-default">Clear cart</a>
+            <a href="#" class="b3 btn btn-default disabled">Clear cart</a>
         </div>
     </div>
     <div id="orders">
@@ -95,7 +98,7 @@
             <div class="pr"> 0 grn</div>
         </div>
         <div>
-            <a href="#" class="zamovyty btn btn-default" disabled >Order</a>
+            <a href="#" class="zamovyty btn btn-default disabled"  >Order</a>
         </div>
     </div>
 </div>
